@@ -2,19 +2,37 @@ package com.example.higherorderfunction
 
 import android.view.View
 
-// Data class representing a food item
-data class FoodItem(val name: String, val price: Double, val rating: Double)
+// Data class for food item
+// Updated FoodItem data class with "isVegetarian" and "isGlutenFree" properties
+data class FoodItem(
+    val name: String,
+    val price: Double,
+    val rating: Double,
+    val isVegetarian: Boolean,
+    val isGlutenFree: Boolean
+)
 
-// Higher-Order Function to filter food items
-inline fun filterFoodItems(
-    foodList: List<FoodItem>,
-    filterLogic: (FoodItem) -> Boolean
-): List<FoodItem> {
-    return foodList.filter(filterLogic)
+
+// Function to filter food items based on selected filters
+fun filterFoodItems(foodList: List<FoodItem>, selectedFilters: Set<String>): List<FoodItem> {
+    if (selectedFilters.isEmpty()) return foodList
+
+    return foodList.filter { food ->
+        var matchesAll = true
+
+        // Apply filters dynamically
+        selectedFilters.forEach { filter ->
+            when (filter) {
+                "Budget Friendly" -> matchesAll = matchesAll && (food.price <= 200) // ✅ ₹200 or less
+                "Highly Rated" -> matchesAll = matchesAll && (food.rating >= 4.0) // ✅ Rating 4.0 or more
+                "Vegetarian" -> matchesAll = matchesAll && food.isVegetarian // ✅ Vegetarian items
+                "Gluten-Free" -> matchesAll = matchesAll && food.isGlutenFree // ✅ Gluten-free items
+            }
+        }
+
+        matchesAll
+    }
 }
-
-
-
 
 /*
 without higher-order function
